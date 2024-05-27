@@ -1,0 +1,10 @@
+setuptools==59.5.0
+accelerate>=0.12.0
+tokenizers>=0.13.3
+datasets==2.18.0
+evaluate==0.4.1
+peft==0.10.0 
+rouge_score==0.1.2
+fire==0.6.0 
+sentencepiece
+scikit-learn
