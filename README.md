@@ -8,16 +8,18 @@ Finetune Swallow - LLM models by Tokyo Institute of Technology - using HPE Machi
 Swallow is an LLM developed by researchers at Tokyo Tech with enhanced Japanese capability, by extending the vocabulary of Llama 2 to include Japanese characters and continual pre-training on a large Japanese web corpus.
 The performance of Swallow increased with the amount of training data up to 100B tokens through continual pre-training, and Swallow achieved competitive performance compared to other LLMs trained on English and Japanese datasets from scractch. 
 
-    Swallow paper: [Continual Pre-Training for Cross-Lingual LLM Adaptation: Enhancing Japanese Language Capabilities](https://arxiv.org/pdf/2404.17790)
+Swallow paper: [Continual Pre-Training for Cross-Lingual LLM Adaptation: Enhancing Japanese Language Capabilities](https://arxiv.org/pdf/2404.17790)
 
 
 - Why instruction tuning? 
 
 Instruction finetuning is an efficient technique to enhance the capabilities and controllability of LLMs, addressing the issue of mismatch between the training objective and users' objective: LLMs are typically trained on minimizing the contextual next token generation (aka next word prediction); while users prefer LLMs to follow predefined instruction templates and return proper and safe answers in a controllable manner. In this demo, Swallow 70b instruct-v0.1 is used.
 
-    Model card on HF: [tokyotech-llm/Swallow-70b-instruct-v0.1](https://huggingface.co/tokyotech-llm/Swallow-70b-instruct-v0.1)
+Model card on HF: [tokyotech-llm/Swallow-70b-instruct-v0.1](https://huggingface.co/tokyotech-llm/Swallow-70b-instruct-v0.1)
 
 ## Why HPE MLDE for finetuning LLMs at scale?
+
+<img src="imgs/det_components.jpg" alt="MLDE Components" width="600">
 
 - Distributed training
 With Determined, to scale an experiment/trial to multiple GPUs requires a single configuration line change. There is no need to worry about setting up frameworks like Horovod or PyTorch Distributed Data Parallel (DDP), or Pytorch Lightning.
