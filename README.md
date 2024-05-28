@@ -1,15 +1,12 @@
-# det-finetuning-swallow-tokyotech-llm
-Finetune Swallow - LLM models by Tokyo Institute of Technology - using HPE Machine Learning Development Environment (MLDE) callback with Hugging Face Trainer API to enable MLDE's distributed training, fault tolerance, checkpointing and metrics reporting.
+# Finetune Swallow 70B by tokyotech-llm using HPE Machine Learning Development Environment (aka Determined AI)
+Finetune Swallow - LLM models by Tokyo Institute of Technology - using HPE MLDE callback with Hugging Face Trainer API to enable MLDE's distributed training, fault tolerance, checkpointing and metrics reporting.
 
-# Why Swallow?
-
-- Overview of Swallow
+# Overview of Swallow
 
 Swallow is an LLM developed by researchers at Tokyo Tech with enhanced Japanese capability, by extending the vocabulary of Llama 2 to include Japanese characters and continual pre-training on a large Japanese web corpus.
-The performance of Swallow increased with the amount of training data up to 100B tokens through continual pre-training, and Swallow achieved competitive performance compared to other LLMs trained on English and Japanese datasets from scractch. 
+The performance of Swallow increased with the amount of training data up to 100B tokens through continual pre-training, and Swallow achieved competitive performance compared to other LLMs trained on English and Japanese datasets from scratch.
 
 Swallow paper: [Continual Pre-Training for Cross-Lingual LLM Adaptation: Enhancing Japanese Language Capabilities](https://arxiv.org/pdf/2404.17790)
-
 
 - Why instruction tuning? 
 
@@ -17,25 +14,28 @@ Instruction finetuning is an efficient technique to enhance the capabilities and
 
 Model card on HF: [tokyotech-llm/Swallow-70b-instruct-v0.1](https://huggingface.co/tokyotech-llm/Swallow-70b-instruct-v0.1)
 
-## Why HPE MLDE for finetuning LLMs at scale?
+## Why MLDE for finetuning LLMs at scale?
 
 <img src="imgs/det_components.jpg" alt="MLDE Components" width="600">
+Source: [Determined AI](https://www.determined.ai/)
 
 - Distributed training
-With Determined, to scale an experiment/trial to multiple GPUs requires a single configuration line change. There is no need to worry about setting up frameworks like Horovod or PyTorch Distributed Data Parallel (DDP), or Pytorch Lightning.
-
-<img src="imgs/dtrain.png" alt="Distributed Training" width="600">
+Distributed training without changing your model code. Determined takes care of provisioning machines, networking, data loading, and fault tolerance. With Determined, to scale an experiment/trial to multiple GPUs requires a single configuration line change. There is no need to worry about setting up frameworks like Horovod or PyTorch Distributed Data Parallel (DDP), or Pytorch Lightning.
 
 - Hyperparameter search using Adaptive ASHA
 To accelerate a search process, HPE MLDE leverages the Adaptive ASHA algorithm in order to find the best set of parameters in the hyperparameter space. 
 The idea behind Adaptive ASHA is that we’ll run all the different model variations with different sets of hyperparameters in parallel, then we’ll stop the ones that are not performing well early and continue to train the ones that are performing well until convergence. 
 
-<img src="imgs/hpsearch.png" alt="Distributed Hyperparameter Search" width="900">
+- Experiment tracking
+Interpret your experiment results using the Determined UI and TensorBoard, and reproduce experiments with artifact tracking. Deploy your model using Determined's built-in model registry.
+
+- Resource management
+Easily share on-premise or cloud GPUs with your team. Determined’s cluster scheduling offers first-class support for deep learning and seamless spot instance support.
 
 - DeepSpeed integration
 DeepSpeed API is a lightweight wrapper on PyTorch for training and inference of hyperscale DL models, ex., trillion parameter LLMs. DeepSpeed manages the boilerplate state-of-the-art training techniques, such as distributed training, mixed precision, gradient accumulation, and checkpoints so that users can focus on model development. DeepSpeed make training those models efficiently on 100s or 1000s of GPUs using techniques such as Zero Redundancy Optimizer (ZeRO), 3D parallelism that include data, model parallelism, and pipeline parallelism, and ZeRO-Infinity. 
 
-In this demo, we'll show you how you can leverage DeepSpeed ZeRO stage 3 for finetuning Swallow on MLDE. DeepSpeed ZeRO stage 3 includes all optimizer state partitioning, gradient partitioning, and model parameter partitioning. 
+In this demo, we leverage DeepSpeed ZeRO stage 3 for finetuning Swallow on MLDE. DeepSpeed ZeRO stage 3 includes all optimizer state partitioning, gradient partitioning, and model parameter partitioning. 
 
 <img src="imgs/deepspeed-zero.png" alt="DeepSpeed-ZeRO" width="500">
 
@@ -47,10 +47,10 @@ While the BERT family models including ALBERT, BERT, DistilBERT, and RoBERTA are
 
 - HuggingFace Trainer's original *.py is located at /scripts/run_clm_hf.py
 
-- Integration between HF Trainer and MLDE via MLDE callback
+- Integration between HF Trainer and Determined via `DetCallback` class in `hf_callback.py`
 
 The main callback is located in determined.transformers and the associated DetCallback object is used in model code as in:
-hf_callback.py
+
 ```bash
 det_callback = DetCallback(training_args,
                             filter_metrics=["loss", "accuracy"],
@@ -67,7 +67,7 @@ from determined.pytorch import dsat
 from hf_callback import DetCallback
 ```
 
-- ModelArguments Class: No major changes. We want to add --use_lora attribute.
+- ModelArguments Class: No major changes. We want to add --use_lora attribute to enable Low-rank Adaptation technique.
 
 ```bash
 use_lora: bool = field(
@@ -119,7 +119,7 @@ if __name__ == "__main__":
         )
         main(det_callback, tb_callback, model_args, data_args, training_args)
 ```
-- Parsing arguments
+- Additional parsing arguments functions
 ```bash
 def dict2args(hparams):
     out = []
@@ -203,7 +203,7 @@ max_restarts: 0
 workspace: "poc"
 project: "swallow"
 ```
-DeepSpeed Configurations
+## DeepSpeed configuration
 
 ds_config_stage_3.json
 ```bash
@@ -259,7 +259,7 @@ ds_config_stage_3.json
   }
 }
 ```
-- Package installation at start up 
+## Package installation during start-up 
 
 requirements.txt
 
@@ -281,11 +281,11 @@ startup-hook.sh
 pip install -r requirements.txt
 ```
 
-### How to launch a notebook in MLDE
+## How to launch a notebook in MLDE
 
+Move back one level from `det_files/` to home directory
 
 ```bash
-# Go back one level from det_files/ to home directory
 cd ..
 det -m <master_address>:8080/ notebook start --config-file notebook.yaml -c .
 ```
