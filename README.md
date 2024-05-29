@@ -17,6 +17,7 @@ Model card on HF: [tokyotech-llm/Swallow-70b-instruct-v0.1](https://huggingface.
 ## Why MLDE for finetuning LLMs at scale?
 
 <img src="imgs/det_components.jpg" alt="MLDE Components" width="600">
+
 Source: [Determined AI](https://www.determined.ai/)
 
 - Distributed training
