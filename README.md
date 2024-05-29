@@ -1,5 +1,5 @@
 # Finetune Swallow 70B by tokyotech-llm using Determined AI 
-Finetune Swallow - LLM models by Tokyo Institute of Technology - using Determined callback with Hugging Face Trainer API to enable MLDE's distributed training, fault tolerance, checkpointing and metrics reporting.
+Finetune Swallow - LLM models by Tokyo Institute of Technology - using Determined callback with Hugging Face Trainer API to leverage Determined's distributed training, fault tolerance, checkpointing and metrics reporting.
 
 # Overview of Swallow
 
@@ -14,9 +14,9 @@ Instruction finetuning is an efficient technique to enhance the capabilities and
 
 Model card on HF: [tokyotech-llm/Swallow-70b-instruct-v0.1](https://huggingface.co/tokyotech-llm/Swallow-70b-instruct-v0.1)
 
-## Why MLDE for finetuning LLMs at scale?
+## Why Determined AI for finetuning LLMs at scale?
 
-<img src="imgs/det_components.jpg" alt="MLDE Components" width="600">
+<img src="imgs/det_components.jpg" alt="Determined AI Components" width="600">
 
 Source: [Determined AI](https://www.determined.ai/)
 
@@ -36,13 +36,13 @@ Easily share on-premise or cloud GPUs with your team. Determined’s cluster sch
 - DeepSpeed integration
 DeepSpeed API is a lightweight wrapper on PyTorch for training and inference of hyperscale DL models, ex., trillion parameter LLMs. DeepSpeed manages the boilerplate state-of-the-art training techniques, such as distributed training, mixed precision, gradient accumulation, and checkpoints so that users can focus on model development. DeepSpeed make training those models efficiently on 100s or 1000s of GPUs using techniques such as Zero Redundancy Optimizer (ZeRO), 3D parallelism that include data, model parallelism, and pipeline parallelism, and ZeRO-Infinity. 
 
-In this demo, we leverage DeepSpeed ZeRO stage 3 for finetuning Swallow on MLDE. DeepSpeed ZeRO stage 3 includes all optimizer state partitioning, gradient partitioning, and model parameter partitioning. 
+In this demo, we leverage DeepSpeed ZeRO stage 3 for finetuning Swallow on Determined. DeepSpeed ZeRO stage 3 includes all optimizer state partitioning, gradient partitioning, and model parameter partitioning. 
 
 <img src="imgs/deepspeed-zero.png" alt="DeepSpeed-ZeRO" width="500">
 
 Source: [ZeRO & DeepSpeed: New system optimizations enable training models with over 100 billion parameters](https://www.microsoft.com/en-us/research/blog/zero-deepspeed-new-system-optimizations-enable-training-models-with-over-100-billion-parameters/)
 
-## How MLDE works with HF Trainer
+## How Determined AI works with HF Trainer
 
 While the BERT family models including ALBERT, BERT, DistilBERT, and RoBERTA are trained or finetuned using a masked language modelling (MLM) loss, later pretrained transformer based models including GPT, GPT-2, Llama, Mistral, Falcon, Phi, etc are trained or finetunde using a causal language modeling (CLM) loss. Find more information about the differences between those objectives in [this Transformer model summary](https://huggingface.co/docs/transformers/model_summary).
 
@@ -151,7 +151,7 @@ def parse_input_arguments(
         )
     return model_args, data_args, training_args
 ```
-## Configuration file for running MLDE on DeepSpeed
+## Determined's configuration file 
 
 swallow_70b_ds3.yaml
 ```bash
