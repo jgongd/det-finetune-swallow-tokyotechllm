@@ -6,9 +6,6 @@ environment:
     - NCCL_DEBUG=INFO
     - HF_HOME=/hf_cache
     - NCCL_SOCKET_IFNAME=ens,eth,ib
-bind_mounts:
-  - host_path: /nvmefs1/tmp/hf_cache
-    container_path: /hf_cache
 resources:
   slots_per_trial: 4
   resource_pool: A100
@@ -46,7 +43,6 @@ entrypoint: >-
   --per_device_eval_batch_size 2
   --trust_remote_code false
   --fp16
-  --block_size 1024
   --use_auth_token False
 max_restarts: 0
 workspace: "Daniel"

@@ -57,7 +57,7 @@ det_callback = DetCallback(training_args,
                             tokenizer=feature_extractor)
 trainer.add_callback(det_callback)
 ```
-## Major changes in the code for integrating DetCallback
+### Major changes in the code for integrating DetCallback
 
 - Import Determined, Determined's DeepSpeed Auto Tuner (DSAT), and Determined Callback
 
@@ -119,7 +119,7 @@ if __name__ == "__main__":
         )
         main(det_callback, tb_callback, model_args, data_args, training_args)
 ```
-- Additional parsing arguments functions
+- Additional argument-parsing functions
 ```bash
 def dict2args(hparams):
     out = []
@@ -281,7 +281,7 @@ startup-hook.sh
 pip install -r requirements.txt
 ```
 
-## How to launch a notebook in MLDE
+## How to launch a notebook for running inference
 
 Move back one level from `det_files/` to home directory
 
@@ -290,4 +290,6 @@ cd ..
 det -m <master_address>:8080/ notebook start --config-file notebook.yaml -c .
 ```
 
-When Jupyter Lab is launched, open `Finetune Swallow 70B.ipynb` and start interacting with the original and finetuned Swallow 70B models. 
+When Jupyter Lab is launched, open `swallow_13b_inference.ipynb` and start interacting with the original and finetuned Swallow 13B models.
+
+Note: This notebook is mainly for demoing how LLM checkpoint can be loaded for downstream application inference after finetuning using Determined client API. When running inference on the 70B model, you might need to improve the scripts, ex., enable multi-GPU inference or quantization to make the model fit in a single A100 GPU.

@@ -2,5 +2,5 @@ description: tokyotechllm-swallow-70b-finetune
 environment:
   image: determinedai/genai-train:latest
 resources:
-  slots: 4
+  slots: 2
   resource_pool: A100
