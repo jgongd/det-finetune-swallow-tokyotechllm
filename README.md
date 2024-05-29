@@ -1,5 +1,5 @@
-# Finetune Swallow 70B by tokyotech-llm using HPE Machine Learning Development Environment (aka Determined AI)
-Finetune Swallow - LLM models by Tokyo Institute of Technology - using HPE MLDE callback with Hugging Face Trainer API to enable MLDE's distributed training, fault tolerance, checkpointing and metrics reporting.
+# Finetune Swallow 70B by tokyotech-llm using Determined AI 
+Finetune Swallow - LLM models by Tokyo Institute of Technology - using Determined callback with Hugging Face Trainer API to enable MLDE's distributed training, fault tolerance, checkpointing and metrics reporting.
 
 # Overview of Swallow
 
@@ -24,7 +24,7 @@ Source: [Determined AI](https://www.determined.ai/)
 Distributed training without changing your model code. Determined takes care of provisioning machines, networking, data loading, and fault tolerance. With Determined, to scale an experiment/trial to multiple GPUs requires a single configuration line change. There is no need to worry about setting up frameworks like Horovod or PyTorch Distributed Data Parallel (DDP), or Pytorch Lightning.
 
 - Hyperparameter search using Adaptive ASHA
-To accelerate a search process, HPE MLDE leverages the Adaptive ASHA algorithm in order to find the best set of parameters in the hyperparameter space. 
+To accelerate a search process, Determined leverages the Adaptive ASHA algorithm in order to find the best set of parameters in the hyperparameter space. 
 The idea behind Adaptive ASHA is that we’ll run all the different model variations with different sets of hyperparameters in parallel, then we’ll stop the ones that are not performing well early and continue to train the ones that are performing well until convergence. 
 
 - Experiment tracking
