@@ -6,6 +6,9 @@ environment:
     - NCCL_DEBUG=INFO
     - HF_HOME=/hf_cache
     - NCCL_SOCKET_IFNAME=ens,eth,ib
+bind_mounts:
+  - host_path: /nvmefs1/tmp/hf_cache
+    container_path: /hf_cache
 resources:
   slots_per_trial: 4
   resource_pool: A100
