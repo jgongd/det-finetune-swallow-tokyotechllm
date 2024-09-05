@@ -365,6 +365,7 @@ def main(det_callback, tb_callback, model_args, data_args, training_args):
     #
     # In distributed training, the load_dataset function guarantee that only one local process can concurrently
     # download the dataset.
+    print("before load dataset")
     if data_args.dataset_name is not None:
         # Downloading and loading a dataset from the hub.
         raw_datasets = load_dataset(
@@ -431,7 +432,7 @@ def main(det_callback, tb_callback, model_args, data_args, training_args):
                 use_auth_token=model_args.use_auth_token,
                 **dataset_args,
             )
-
+    print("after load dataset")
     # See more about loading any type of standard or custom dataset (from files, python dict, pandas DataFrame, etc) at
     # https://huggingface.co/docs/datasets/loading_datasets.html.
 
@@ -447,10 +448,12 @@ def main(det_callback, tb_callback, model_args, data_args, training_args):
         "use_auth_token": model_args.use_auth_token,
         "trust_remote_code": model_args.trust_remote_code,
     }
+    print("before config")
     if model_args.config_name:
         config = AutoConfig.from_pretrained(model_args.config_name, **config_kwargs)
     elif model_args.model_name_or_path:
         config = AutoConfig.from_pretrained(model_args.model_name_or_path, **config_kwargs)
+        print(f"original config: {config}")
     else:
         config = CONFIG_MAPPING[model_args.model_type]()
         logger.warning("You are instantiating a new config instance from scratch.")
@@ -458,7 +461,7 @@ def main(det_callback, tb_callback, model_args, data_args, training_args):
             logger.info(f"Overriding config: {model_args.config_overrides}")
             config.update_from_string(model_args.config_overrides)
             logger.info(f"New config: {config}")
-
+    print("after config before token")
     tokenizer_kwargs = {
         "cache_dir": model_args.cache_dir,
         "use_fast": model_args.use_fast_tokenizer,
@@ -476,7 +479,7 @@ def main(det_callback, tb_callback, model_args, data_args, training_args):
         )
     if tokenizer.pad_token is None:
         tokenizer.pad_token_id = tokenizer.eos_token_id
-
+    print("after token before model")
     if model_args.model_name_or_path:
         torch_dtype = (
             model_args.torch_dtype
@@ -498,6 +501,7 @@ def main(det_callback, tb_callback, model_args, data_args, training_args):
         n_params = sum({p.data_ptr(): p.numel() for p in model.parameters()}.values())
         logger.info(f"Training new model from scratch - Total size={n_params/2**20:.2f}M params")
 
+    print("after model")
     if model_args.use_lora:
         logger.error(f"using LoRA")
         from peft import get_peft_model, LoraConfig, TaskType
@@ -666,9 +670,10 @@ def main(det_callback, tb_callback, model_args, data_args, training_args):
         if training_args.do_eval and not is_torch_tpu_available()
         else None,
     )
+    model.save_pretrained
     trainer.add_callback(det_callback)
     trainer.add_callback(tb_callback)
-
+    print("before training")
     # Training
     if training_args.do_train:
         checkpoint = None
@@ -692,7 +697,8 @@ def main(det_callback, tb_callback, model_args, data_args, training_args):
         trainer.log_metrics("train", metrics)
         trainer.save_metrics("train", metrics)
         trainer.save_state()
-
+    print("after training")
+    print("before evaluation")
     # Evaluation
     if training_args.do_eval:
         logger.info("*** Evaluate ***")
