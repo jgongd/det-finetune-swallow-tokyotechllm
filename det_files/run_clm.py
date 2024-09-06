@@ -431,6 +431,7 @@ def main(det_callback, tb_callback, model_args, data_args, training_args):
                 use_auth_token=model_args.use_auth_token,
                 **dataset_args,
             )
+
     # See more about loading any type of standard or custom dataset (from files, python dict, pandas DataFrame, etc) at
     # https://huggingface.co/docs/datasets/loading_datasets.html.
 
@@ -456,6 +457,7 @@ def main(det_callback, tb_callback, model_args, data_args, training_args):
         )
     if tokenizer.pad_token is None:
         tokenizer.pad_token_id = tokenizer.eos_token_id
+
     if model_args.model_name_or_path:
         torch_dtype = (
             model_args.torch_dtype
@@ -642,7 +644,6 @@ def main(det_callback, tb_callback, model_args, data_args, training_args):
         if training_args.do_eval and not is_torch_tpu_available()
         else None,
     )
-    model.save_pretrained
     trainer.add_callback(det_callback)
     trainer.add_callback(tb_callback)
 
