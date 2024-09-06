@@ -18,7 +18,7 @@ hyperparameters:
 entrypoint: >-
   python -m determined.launch.deepspeed
   python run_clm.py
-  --model_name_or_path tokyotech-llm/Swallow-7b-instruct-v0.1
+  --model_name_or_path tokyotech-llm/Swallow-70b-instruct-v0.1
   --dataset_name camel-ai/math
   --dataset_config_name default
   --do_train

@@ -365,7 +365,6 @@ def main(det_callback, tb_callback, model_args, data_args, training_args):
     #
     # In distributed training, the load_dataset function guarantee that only one local process can concurrently
     # download the dataset.
-    print("before load dataset")
     if data_args.dataset_name is not None:
         # Downloading and loading a dataset from the hub.
         raw_datasets = load_dataset(
@@ -432,7 +431,6 @@ def main(det_callback, tb_callback, model_args, data_args, training_args):
                 use_auth_token=model_args.use_auth_token,
                 **dataset_args,
             )
-    print("after load dataset")
     # See more about loading any type of standard or custom dataset (from files, python dict, pandas DataFrame, etc) at
     # https://huggingface.co/docs/datasets/loading_datasets.html.
 
@@ -441,10 +439,6 @@ def main(det_callback, tb_callback, model_args, data_args, training_args):
     # Distributed training:
     # The .from_pretrained methods guarantee that only one local process can concurrently
     # download model & vocab.
-
-    
-    
-    print("before token")
     tokenizer_kwargs = {
         "cache_dir": model_args.cache_dir,
         "use_fast": model_args.use_fast_tokenizer,
@@ -462,7 +456,6 @@ def main(det_callback, tb_callback, model_args, data_args, training_args):
         )
     if tokenizer.pad_token is None:
         tokenizer.pad_token_id = tokenizer.eos_token_id
-    print("after token before model")
     if model_args.model_name_or_path:
         torch_dtype = (
             model_args.torch_dtype
@@ -481,7 +474,6 @@ def main(det_callback, tb_callback, model_args, data_args, training_args):
     else:
         logger.error(f"model_name_or_path is required")
 
-    print("after model")
     if model_args.use_lora:
         logger.error(f"using LoRA")
         from peft import get_peft_model, LoraConfig, TaskType
@@ -653,7 +645,7 @@ def main(det_callback, tb_callback, model_args, data_args, training_args):
     model.save_pretrained
     trainer.add_callback(det_callback)
     trainer.add_callback(tb_callback)
-    print("before training")
+
     # Training
     if training_args.do_train:
         checkpoint = None
@@ -677,8 +669,7 @@ def main(det_callback, tb_callback, model_args, data_args, training_args):
         trainer.log_metrics("train", metrics)
         trainer.save_metrics("train", metrics)
         trainer.save_state()
-    print("after training")
-    print("before evaluation")
+
     # Evaluation
     if training_args.do_eval:
         logger.info("*** Evaluate ***")
