@@ -442,26 +442,9 @@ def main(det_callback, tb_callback, model_args, data_args, training_args):
     # The .from_pretrained methods guarantee that only one local process can concurrently
     # download model & vocab.
 
-    config_kwargs = {
-        "cache_dir": model_args.cache_dir,
-        "revision": model_args.model_revision,
-        "use_auth_token": model_args.use_auth_token,
-        "trust_remote_code": model_args.trust_remote_code,
-    }
-    print("before config")
-    if model_args.config_name:
-        config = AutoConfig.from_pretrained(model_args.config_name, **config_kwargs)
-    elif model_args.model_name_or_path:
-        config = AutoConfig.from_pretrained(model_args.model_name_or_path, **config_kwargs)
-        print(f"original config: {config}")
-    else:
-        config = CONFIG_MAPPING[model_args.model_type]()
-        logger.warning("You are instantiating a new config instance from scratch.")
-        if model_args.config_overrides is not None:
-            logger.info(f"Overriding config: {model_args.config_overrides}")
-            config.update_from_string(model_args.config_overrides)
-            logger.info(f"New config: {config}")
-    print("after config before token")
+    
+    
+    print("before token")
     tokenizer_kwargs = {
         "cache_dir": model_args.cache_dir,
         "use_fast": model_args.use_fast_tokenizer,
@@ -489,7 +472,6 @@ def main(det_callback, tb_callback, model_args, data_args, training_args):
         model = AutoModelForCausalLM.from_pretrained(
             model_args.model_name_or_path,
             from_tf=bool(".ckpt" in model_args.model_name_or_path),
-            config=config,
             cache_dir=model_args.cache_dir,
             revision=model_args.model_revision,
             use_auth_token=model_args.use_auth_token,
@@ -497,9 +479,7 @@ def main(det_callback, tb_callback, model_args, data_args, training_args):
             low_cpu_mem_usage=model_args.low_cpu_mem_usage,
         )
     else:
-        model = AutoModelForCausalLM.from_config(config)
-        n_params = sum({p.data_ptr(): p.numel() for p in model.parameters()}.values())
-        logger.info(f"Training new model from scratch - Total size={n_params/2**20:.2f}M params")
+        logger.error(f"model_name_or_path is required")
 
     print("after model")
     if model_args.use_lora:
