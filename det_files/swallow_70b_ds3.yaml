@@ -6,12 +6,6 @@ environment:
     - NCCL_DEBUG=INFO
     - HF_HOME=/hf_cache
     - NCCL_SOCKET_IFNAME=ens,eth,ib
-bind_mounts:
-  - host_path: /nvmefs1/tmp/hf_cache
-    container_path: /hf_cache
-resources:
-  slots_per_trial: 4
-  resource_pool: A100
 searcher:
   name: single
   max_length:
@@ -24,7 +18,7 @@ hyperparameters:
 entrypoint: >-
   python -m determined.launch.deepspeed
   python run_clm.py
-  --model_name_or_path tokyotech-llm/Swallow-70b-instruct-v0.1
+  --model_name_or_path tokyotech-llm/Swallow-7b-instruct-v0.1
   --dataset_name camel-ai/math
   --dataset_config_name default
   --do_train
@@ -34,7 +28,7 @@ entrypoint: >-
   --max_steps 100  
   --logging_strategy steps
   --logging_steps 10
-  --output_dir /tmp/test-clm
+  --output_dir /run/determined/workdir/
   --eval_steps 10
   --evaluation_strategy steps
   --save_total_limit 1
@@ -48,5 +42,3 @@ entrypoint: >-
   --fp16
   --use_auth_token False
 max_restarts: 0
-workspace: "Daniel"
-project: "llm"
